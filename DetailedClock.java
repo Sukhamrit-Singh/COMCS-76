@@ -12,8 +12,10 @@ time.
 
 //  Imports all the necessary libraries
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -24,29 +26,64 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
 //  Class DetailedClock that extends off Application
 public class DetailedClock extends Application {
 
+    //  Creating a global variable
+    ClockPane clockPane;
+
     @Override // Override the start method in the Application class
     public void start(Stage primaryStage) {
         // Create a clock and a label
-        ClockPane clock = new ClockPane();
-        String timeString = clock.getHour() + ":" + clock.getMinute()
-                + ":" + clock.getSecond();
-        Label lblCurrentTime = new Label(timeString);
+        Label lblCurrentTime = new Label();
+        clockPane = new ClockPane(lblCurrentTime);
+        Button stopBtn = new Button("Stop");
+        Button startBtn = new Button("Start");
 
-        // Place clock and label in border pane
+        // Place clock, label, buttons in border pane
         BorderPane pane = new BorderPane();
-        pane.setCenter(clock);
+        pane.setCenter(clockPane);
         pane.setBottom(lblCurrentTime);
         BorderPane.setAlignment(lblCurrentTime, Pos.TOP_CENTER);
 
+        //  Setting button alignments
+        pane.setLeft(startBtn);
+        pane.setRight(stopBtn);
+        BorderPane.setAlignment(startBtn, Pos.BOTTOM_LEFT);
+        BorderPane.setAlignment(stopBtn, Pos.BOTTOM_RIGHT);
+
+        //  Setting actions for buttons
+        startBtn.setOnAction(new StartClockHandler());
+        stopBtn.setOnAction(new StopClockHandler());
+
         // Create a scene and place it in the stage
-        Scene scene = new Scene(pane, 250, 250);
+        Scene scene = new Scene(pane, 350, 350);
         primaryStage.setTitle("DisplayClock"); // Set the stage title
         primaryStage.setScene(scene); // Place the scene in the stage
         primaryStage.show(); // Display the stage
+
+        //  Starts the clock
+        clockPane.startClock();
+
+    }
+
+    class StartClockHandler implements EventHandler<ActionEvent> {
+        @Override // Override the handle method
+        public void handle(ActionEvent e) {
+            clockPane.startClock();
+        }
+    }
+
+    class StopClockHandler implements EventHandler<ActionEvent> {
+        @Override // Override the handle method
+        public void handle(ActionEvent e) {
+            clockPane.stopClock();
+        }
     }
 }
 
@@ -57,6 +94,8 @@ class ClockPane extends Pane {
     private int hour;
     private int minute;
     private int second;
+    Timer timer; // = new Timer();;
+    Label lblCurrentTime;
 
     /** Construct a default clock with the current time*/
     public ClockPane() {
@@ -114,6 +153,33 @@ class ClockPane extends Pane {
         this.second = calendar.get(Calendar.SECOND);
 
         paintClock(); // Repaint the clock
+    }
+
+    //  Creating a clock pane method
+    public ClockPane(Label lblCurrentTime) {
+        this.lblCurrentTime = lblCurrentTime;
+
+    }
+    //  Creating Start clock method
+    public void startClock() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("Running: " + new java.util.Date());
+                Platform.runLater(()->{
+                    setCurrentTime();
+
+                    String timeString = getHour() + ":" + getMinute() + ":" + getSecond();
+                    lblCurrentTime.setText(timeString);
+                });
+            }
+        }, 0, 1000);
+    }
+
+    //  Creating stop clock method
+    public void stopClock() {
+        timer.cancel();
     }
 
     /** Paint the clock */
