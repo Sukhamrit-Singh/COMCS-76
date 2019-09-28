@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -39,6 +40,11 @@ public class DetailedClock extends Application {
 
     @Override // Override the start method in the Application class
     public void start(Stage primaryStage) {
+        //  Creating an HBox
+        HBox hBox = new HBox();
+        hBox.setSpacing(10);
+        hBox.setAlignment(Pos.CENTER);
+
         // Create a clock and a label
         Label lblCurrentTime = new Label();
         clockPane = new ClockPane(lblCurrentTime);
@@ -48,14 +54,16 @@ public class DetailedClock extends Application {
         // Place clock, label, buttons in border pane
         BorderPane pane = new BorderPane();
         pane.setCenter(clockPane);
-        pane.setBottom(lblCurrentTime);
+        pane.setTop(lblCurrentTime);
         BorderPane.setAlignment(lblCurrentTime, Pos.TOP_CENTER);
 
-        //  Setting button alignments
-        pane.setLeft(startBtn);
-        pane.setRight(stopBtn);
-        BorderPane.setAlignment(startBtn, Pos.BOTTOM_LEFT);
-        BorderPane.setAlignment(stopBtn, Pos.BOTTOM_RIGHT);
+        //  Adding the buttons to the hBox
+        hBox.getChildren().add(startBtn);
+        hBox.getChildren().add(stopBtn);
+
+        //  Setting Button Alignments
+        pane.setBottom(hBox);
+        BorderPane.setAlignment(hBox, Pos.CENTER);
 
         //  Setting actions for buttons
         startBtn.setOnAction(new StartClockHandler());
