@@ -25,11 +25,16 @@ public class Permutations {
             //  Creating a new scanner object
             Scanner input = new Scanner(System.in);
 
-            //  Displays a piece of text
-            System.out.print("Enter a string: ");
+            // Displays a prompt to the user to enter the text
+            System.out.print("Enter a string, or 0 to exit: ");
 
             //  Initializing the scanner object
-            String text = input.nextLine();
+            //  Trims leading and trailing white spaces
+            String text = input.nextLine().trim();
+
+            //  If the user enters 0, break loop
+            if (text.equals("0"))
+                break;
 
             //  Calling the permutation method for user input
             displayPermutation(text);
