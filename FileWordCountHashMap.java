@@ -78,45 +78,52 @@ public class FileWordCountHashMap {
         // for every word in the words array
         for (int i = 0; i < words.length; i++) {
 
-            // covert to lowercase for case in-sensitive comparison
-            String entry = words[i].toLowerCase();
+            //  Making sure that the words only contain letters,
+            //  no special characters
+            if (words[i].trim().length() > 0 &&
+                    words[i].trim().matches("[A-Z|a-z]+")) {
 
-            // ignore word with 0 length
-            if ( entry.length() == 0 ) {
-                continue; // go to the next entry in the array
+                // covert to lowercase for case in-sensitive comparison
+                String entry = words[i].toLowerCase();
+
+                // ignore word with 0 length
+                if ( entry.length() == 0 ) {
+                    continue; // go to the next entry in the array
+                }
+
+                // check if the word starts with a letter
+                boolean startsWithLetter =
+                        Character.isLetter(entry.charAt(0));
+
+                // ignore word that does not start with a letter
+                if ( !startsWithLetter ) {
+                    continue; // go to next entry in the array
+                }
+
+                // check if the entry alreay exist in hash map
+                boolean entryExists = wordsMap.containsKey(entry);
+
+                if ( entryExists) {
+
+                    // if word entry exist, then get the current count
+                    int count = wordsMap.get(entry);
+
+                    // increment the count
+                    count++;
+
+                    // update the word entry count in the hashmap
+                    wordsMap.put(entry, count);
+
+                } else {
+                    // the word does not exist in the hash map
+                    // set the count to 1
+                    int count = 1;
+
+                    // add the word entry to hash map
+                    wordsMap.put(entry, count);
+                }
             }
 
-            // check if the word starts with a letter
-            boolean startsWithLetter =
-                    Character.isLetter(entry.charAt(0));
-
-            // ignore word that does not start with a letter
-            if ( !startsWithLetter ) {
-                continue; // go to next entry in the array
-            }
-
-            // check if the entry alreay exist in hash map
-            boolean entryExists = wordsMap.containsKey(entry);
-
-            if ( entryExists) {
-
-                // if word entry exist, then get the current count
-                int count = wordsMap.get(entry);
-
-                // increment the count
-                count++;
-
-                // update the word entry count in the hashmap
-                wordsMap.put(entry, count);
-
-            } else {
-                // the word does not exist in the hash map
-                // set the count to 1
-                int count = 1;
-
-                // add the word entry to hash map
-                wordsMap.put(entry, count);
-            }
         }
     }
 }
